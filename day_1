@@ -5,10 +5,6 @@
 //////create and fill array
 int * create_and_fill_array_randomaly(int size){
     int * arr = malloc(sizeof(int) * size);
-    if (arr == NULL) {
-        printf("Memory allocation failed!\n");
-        exist(1); 
-    }
     srand(time(NULL));
     int range = size * 10;
     for(int i = 0 ; i < size ; ++i)
@@ -61,7 +57,7 @@ int binari_search(int arr[], int wanted, int low, int high){
     return 0;
 }
 
-/////////////////////////////////////////////////
+/////////////////////////////////////////////////merge
 
 void merge(int * arr, int begin, int middle, int end){
     int* first_part = arr + begin;
