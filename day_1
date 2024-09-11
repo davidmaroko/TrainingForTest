@@ -2,7 +2,59 @@
 #include <stdlib.h>
 #include <time.h>
 
-//////create and fill array
+//create and fill array:
+int * create_and_fill_array_randomaly(int size);
+
+//merge sort:
+void merge(int * arr, int begin, int middle, int end);
+void merge_sort(int * arr, int begin, int end);
+
+//////binari_search
+int binari_search(int arr[], int wanted, int low, int high);
+
+////////quick_sort
+void swap(int * a, int * b);
+int partition(int arr[], int low, int high);
+void quick_sort(int arr[], int low, int high);
+
+int main()
+{
+    int size;
+    printf("choose the size between 1 to 1000\n");
+    scanf("%d", &size);
+    int* arr = create_and_fill_array_randomaly(size);
+    int sort;
+    printf("choose 1 for quick sort or 2 for merge sort\n");
+    scanf("%d", &sort);
+    while(!(sort == 1 || sort == 2)){
+        printf("your input are not legal. 1 for quick sort or 2 for merge sort\n");
+        scanf("%d", &sort);
+    }
+    if(sort == 1)
+        merge_sort(arr, 0, size);
+        
+    else 
+        quick_sort(arr, 0, size-1);
+    
+	printf("\n after sort: \n");
+    for(int i = 0 ; i < size ; ++i){
+        printf("%d, ", arr[i]);
+    }
+	printf("\n");
+	printf("wich number you want to search?\n");
+	int wanted;
+	scanf("%d", &wanted);
+	int exist = binari_search(arr, wanted, 0, size-1);
+	if(exist)
+		printf("the number %d are exist in the array\n");
+	else 
+		printf("the number %d are NOT exist in the array\n");
+
+    free(arr);
+    printf("\n bye bye \n");
+    return 0;
+}
+
 int * create_and_fill_array_randomaly(int size){
     int * arr = malloc(sizeof(int) * size);
     srand(time(NULL));
@@ -41,7 +93,7 @@ void quick_sort(int arr[], int low, int high){
     }
 }
 
-//////binari_search
+//binari_search
 int binari_search(int arr[], int wanted, int low, int high){
     if(wanted < arr[low] || wanted > arr[high])
         return 0;
@@ -57,8 +109,7 @@ int binari_search(int arr[], int wanted, int low, int high){
     return 0;
 }
 
-/////////////////////////////////////////////////merge
-
+//merge sort
 void merge(int * arr, int begin, int middle, int end){
     int* first_part = arr + begin;
     int* second_part = arr + middle;
@@ -97,41 +148,4 @@ void merge_sort(int * arr, int begin, int end){
     merge_sort(arr, middle, end);
     merge(arr,begin, middle, end);
 }
-/////////////////////////////////main
-int main()
-{
-    int size;
-    printf("choose the size between 1 to 1000\n");
-    scanf("%d", &size);
-    int* arr = create_and_fill_array_randomaly(size);
-    int sort;
-    printf("choose 1 for quick sort or 2 for merge sort\n");
-    scanf("%d", &sort);
-    while(!(sort == 1 || sort == 2)){
-        printf("your input are not legal. 1 for quick sort or 2 for merge sort\n");
-        scanf("%d", &sort);
-    }
-    if(sort == 1)
-        merge_sort(arr, 0, size);
-        
-    else 
-        quick_sort(arr, 0, size-1);
-    
-	printf("\n after sort: \n");
-    for(int i = 0 ; i < size ; ++i){
-        printf("%d, ", arr[i]);
-    }
-	printf("\n");
-	printf("wich number you want to search?\n");
-	int wanted;
-	scanf("%d", &wanted);
-	int exist = binari_search(arr, wanted, 0, size-1);
-	if(exist)
-		printf("the number %d are exist in the array\n");
-	else 
-		printf("the number %d are NOT exist in the array\n");
 
-    free(arr);
-    printf("\n bye bye \n");
-    return 0;
-}
