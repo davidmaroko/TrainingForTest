@@ -1,0 +1,79 @@
+#include <iostream>
+#include <cmath>
+#include <thread>
+#include <vector>
+#include <atomic>
+#include <chrono>
+#include <iomanip> 
+
+bool checkDividedWithoutThreads(unsigned long long from, unsigned long long to, unsigned long long number);
+bool isPrimeWithThreads(unsigned long long from, unsigned long long to, unsigned long long number);
+void checkDivided(unsigned long long from, unsigned long long to, unsigned long long number, std::atomic<bool>& isPrime);
+
+bool checkDividedWithoutThreads(unsigned long long from, unsigned long long to, unsigned long long number) {
+    while (from <= to) {
+        if (number % from++ == 0) return false;
+    }
+    return true;
+}
+
+void checkDivided(unsigned long long from, unsigned long long to, unsigned long long number, std::atomic<bool>& isPrime) {
+    while (from <= to && isPrime) {
+        if (number % from++ == 0) {
+            isPrime = false;
+            return;
+        }
+    }
+}
+
+bool isPrimeWithThreads(unsigned long long from, unsigned long long to, unsigned long long number) {
+    std::atomic<bool> isPrime(true);
+    std::vector<std::thread> threads;
+    unsigned long long range = to - from + 1;
+    unsigned long long partSize = range / 5;
+
+    for (int i = 0; i < 5; ++i) {
+        unsigned long long start = from + i * partSize;
+        unsigned long long end = (i == 4) ? to : (start + partSize - 1);
+        threads.emplace_back(checkDivided, start, end, number, std::ref(isPrime));
+    }
+
+    for (auto& t : threads) {
+        t.join();
+    }
+
+    return isPrime;
+}
+
+int main() {
+    unsigned long long number;
+    std::cout << "Enter number: ";
+    std::cin >> number;
+
+    auto startWithoutThreads = std::chrono::high_resolution_clock::now();
+    bool isPrimeWithoutThreads = checkDividedWithoutThreads(2, std::sqrt(number), number);
+    auto endWithoutThreads = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> durationWithoutThreads = endWithoutThreads - startWithoutThreads;
+
+    if (isPrimeWithoutThreads)
+        std::cout << "Without Threads: is prime" << std::endl;
+    else
+        std::cout << "Without Threads: is not a prime" << std::endl;
+
+    std::cout << std::fixed << std::setprecision(10); // 10 digits after the point
+    std::cout << "Time taken without threads: " << durationWithoutThreads.count() << " seconds" << std::endl;
+
+    auto startWithThreads = std::chrono::high_resolution_clock::now();
+    bool isPrimeWithThreadsResult = isPrimeWithThreads(2, std::sqrt(number), number);
+    auto endWithThreads = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> durationWithThreads = endWithThreads - startWithThreads;
+
+    if (isPrimeWithThreadsResult)
+        std::cout << "With Threads: is prime" << std::endl;
+    else
+        std::cout << "With Threads: is not a prime" << std::endl;
+
+    std::cout << "Time taken with threads: " << durationWithThreads.count() << " seconds" << std::endl;
+
+    return 0;
+}
