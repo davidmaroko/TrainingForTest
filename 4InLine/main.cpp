@@ -1,38 +1,59 @@
-
 #include <iostream>
 #include <string>
 #include <vector>
 
 int ROWS = 6;
 int COLS = 7;
-enum class situation{
+enum class Situation{
 	EMPTY,
 	X,
-	O};
+	O
+};
+
+std::string to_string(Situation situation){
+	switch(situation){
+		case Situation::X: return "X";
+		case Situation::O: return "O";
+		default: return " ";
+	}
+}
 	
 class Board{
 public:
 	Board(){
-		m_board = std::vector<std::vector<situation>>(ROWS, std::vector<situation>(COLS,situation::EMPTY));
+		m_board = std::vector<std::vector<Situation>>(ROWS, std::vector<Situation>(COLS,Situation::EMPTY));
 	}
 	void setX(int row, int col){
 		if(!(row >= 0 && row < ROWS && col >= 0 && col < COLS))return;
-		m_board[row][col] = situation::X;
+		m_board[row][col] = Situation::X;
 	}
 	void setY(int row, int col){
 		if(!(row >= 0 && row < ROWS && col >= 0 && col < COLS))return;
-		m_board[row][col] = situation::Y;
+		m_board[row][col] = Situation::O;
 	}
-	void draw Board();
+	void draw_board(){
+		for (int i = 0; i < m_board.size(); ++i) {
+			std::cout << i+1 << " ";
+			for(auto& situation : m_board[i]) {
+				std::cout<<"["<< to_string(situation)<<"] ";
+			}
+			std::cout<<std::endl;
+		}
+		std::cout << "  ";
+		for (int i = 0; i < m_board[0].size(); ++i)
+			std::cout << " " << i+1 << "  ";
+		std::cout << std::endl;
+	}
+				
 			
 private:
-	std::vector<std::vector<situation>> m_board;
+	std::vector<std::vector<Situation>> m_board;
 };
 
 
 int main(){
 	Board board = Board();
-	std::cout<<int(board.m_board[0][1])<<std::endl;
+	board.draw_board();
 	return 0;
 }
 	
